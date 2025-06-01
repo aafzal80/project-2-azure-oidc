@@ -49,7 +49,7 @@ I will build a Node.js/Express web application secured by Azure AD OpenID Connec
 npm install
 node src/server.js
 
-Screenshots (Day 3)
+Screenshots 
 
     docs/screenshots/1-registration.png
 
