@@ -49,6 +49,68 @@ I will build a Node.js/Express web application secured by Entra ID OpenID Connec
 npm install
 node src/server.js
 
+## Code & Test
+
+### Prerequisites  
+- Node.js (v14 or higher) installed  
+- `authConfig.js` correctly configured (Client ID, Tenant ID, Client Secret, Redirect URI, Group IDs)  
+- Azure AD app registration set to include “All groups” in the ID token  
+- Two Azure AD security groups created:  
+  - **WebApp-Users** (with your user as a member)  
+  - **WebApp-Admins** (your user added later for admin testing)
+
+### 1. Install Dependencies  
+```bash
+npm install
+
+2. Verify authConfig.js
+
+Ensure you have:
+
+module.exports = {
+  auth: {
+    clientId: "YOUR_CLIENT_ID_HERE",
+    authority: "https://login.microsoftonline.com/YOUR_TENANT_ID_HERE",
+    clientSecret: "YOUR_CLIENT_SECRET_HERE",
+    redirectUri: "http://localhost:3000/auth/callback"
+  },
+  groupIds: {
+    users: "WEBAPP_USERS_OBJECT_ID",
+    admins: "WEBAPP_ADMINS_OBJECT_ID"
+  }
+};
+
+3. Start the Server
+
+npm start
+
+The server listens on http://localhost:3000.
+4. Test as a “WebApp-Users” Member (Expect 403 for /admin)
+
+    Navigate to http://localhost:3000 → redirected to /login → Azure AD sign-in.
+
+    Sign in with a user who is only in WebApp-Users.
+
+    After sign-in, you land on /, which displays your username, Object ID, and group GUID(s).
+
+    Click Go to Admin Page or visit http://localhost:3000/admin. You should see 403 Forbidden.
+
+    Screenshot: docs/screenshots/5-forbidden.png.
+
+5. Test as a “WebApp-Admins” Member (Expect Admin Page)
+
+    In Azure AD, add your user to WebApp-Admins (Azure AD → Groups → WebApp-Admins → Members → + Add members).
+
+    Sign out: http://localhost:3000/logout.
+
+    Sign in again: http://localhost:3000/login.
+
+    After sign-in, “Your Groups (GUIDs)” now shows both group GUIDs.
+
+    Click Go to Admin Page or visit http://localhost:3000/admin. You should see the Admin Page.
+
+    
+
 Screenshots 
 
     docs/screenshots/1-registration.png
@@ -60,3 +122,9 @@ Screenshots
     docs/screenshots/4-create-groups.png
 
     docs/screenshots/5-webapp-users-members.png
+
+   docs/screenshots/6-forbidden.png
+
+   docs/screenshots/7-admin-success.png
+
+   docs/screenshots/8-success.png
